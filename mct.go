@@ -32,14 +32,20 @@ func runserver() {
 	err = cmd.Wait()
 }
 
-func main() {
-	fmt.Println("hello")
+func maybe_chdir_to_executable_file_path() {
 	for i, a := range os.Args {
 		fmt.Printf("%v) %v\n", i, a)
 	}
+}
+
+func notify_error_when_java_not_found() {
 	s, err := exec.LookPath("java")
 	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("java is [%s]\n", s)
+}
+
+func main() {
+	fmt.Println("hello")
 }
