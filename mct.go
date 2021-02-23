@@ -5,13 +5,30 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"time"
 
 	"github.com/rivo/tview"
 )
 
+var WaitToMessage = time.Minute * 1
+
+var JavaExec = "java"
+var ServerJarName = "server.jar"
+var ServerRunParams = []string{
+	"-Xmx1024M",
+	"-Xms1024M",
+	"-jar",
+	ServerJarName,
+	"nogui",
+}
+
 func runserver() {
-	os.Chdir("D:\\Programs\\Minecraft_server")
-	cmd := exec.Command("java", "-Xmx1024M", "-Xms1024M", "-jar", "server.jar", "nogui")
+	exepath := os.Args[0]
+	targetpath := filepath.Dir(exepath)
+
+	os.Chdir(targetpath)
+	cmd := exec.Command(JavaExec, ServerRunParams...)
 	cmdReader, _ := cmd.StdoutPipe()
 	writer, _ := cmd.StdinPipe()
 	scanner := bufio.NewScanner(cmdReader)
@@ -25,13 +42,15 @@ func runserver() {
 	}()
 	go func() {
 		for myin.Scan() {
+			fmt.Println("wait start")
+			time.Sleep(WaitToMessage)
 			fmt.Println("exec say")
-			writer.Write([]byte("/say hello\n"))
+			writer.Write([]byte("/say 1hour!!!\n"))
 		}
 	}()
 	cmd.Start()
 	<-done
-	err = cmd.Wait()
+	cmd.Wait()
 }
 
 func maybe_chdir_to_executable_file_path() {
@@ -48,10 +67,14 @@ func notify_error_when_java_not_found() {
 	fmt.Printf("java is [%s]\n", s)
 }
 
-func main() {
-	fmt.Println("hello")
+func app_on_tview() {
 	box := tview.NewBox().SetBorder(true).SetTitle("Hello, world!")
 	if err := tview.NewApplication().SetRoot(box, true).Run(); err != nil {
 		panic(err)
 	}
+}
+
+func main() {
+	fmt.Println("hello")
+	runserver()
 }
