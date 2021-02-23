@@ -76,5 +76,6 @@ func app_on_tview() {
 
 func main() {
 	fmt.Println("hello")
-	runserver()
+	//runserver()
+	app_on_tview()
 }
