@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/rivo/tview"
 )
 
 func runserver() {
@@ -48,4 +50,8 @@ func notify_error_when_java_not_found() {
 
 func main() {
 	fmt.Println("hello")
+	box := tview.NewBox().SetBorder(true).SetTitle("Hello, world!")
+	if err := tview.NewApplication().SetRoot(box, true).Run(); err != nil {
+		panic(err)
+	}
 }
