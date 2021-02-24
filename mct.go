@@ -11,7 +11,9 @@ import (
 	"github.com/rivo/tview"
 )
 
-var WaitToMessage = time.Minute * 1
+var TotalWaitTimes = 6
+var MinutesToWait = 10
+var WaitToMessage = time.Minute * 10
 
 var JavaExec = "java"
 var ServerJarName = "server.jar"
@@ -41,11 +43,15 @@ func runserver() {
 		done <- true
 	}()
 	go func() {
-		for myin.Scan() {
-			fmt.Println("wait start")
+		myin.Scan()
+		fmt.Println("wait start")
+		elapsed := 0
+		for i := 0; i < TotalWaitTimes; i++ {
 			time.Sleep(WaitToMessage)
+			elapsed += MinutesToWait
+			text := fmt.Sprintf("%d minutes\n", elapsed)
 			fmt.Println("exec say")
-			writer.Write([]byte("/say 1hour!!!\n"))
+			writer.Write([]byte(text))
 		}
 	}()
 	cmd.Start()
@@ -76,6 +82,6 @@ func app_on_tview() {
 
 func main() {
 	fmt.Println("hello")
-	//runserver()
-	app_on_tview()
+	runserver()
+	//app_on_tview()
 }
